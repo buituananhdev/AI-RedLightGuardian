@@ -1,0 +1,6 @@
+flask 
+ultralytics
+waitress
+json
+flask_cors
+PIL

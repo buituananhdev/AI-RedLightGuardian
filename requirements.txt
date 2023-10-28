@@ -1,5 +1,4 @@
 flask 
 ultralytics
-waitress
 flask_cors
-PIL
+waitress

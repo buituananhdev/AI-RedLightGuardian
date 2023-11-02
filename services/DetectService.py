@@ -2,7 +2,8 @@ import os
 from ultralytics import YOLO
 
 
-def is_center_inside_rectangle(rectangle1, rectangle2):
+def is_center_inside_rectangle(obj, rectangle2):
+    rectangle1 = [int(obj[0]), int(obj[1]), int(obj[2]), int(obj[3])]
     center_x1 = (rectangle1[0] + rectangle1[2]) / 2
     center_y1 = (rectangle1[1] + rectangle1[3]) / 2
 
@@ -30,8 +31,10 @@ class YoloDetect():
     def __init__(self, detect_class=['car', 'motorcycle']):
         print('Loading model...')
         self.detect_class = detect_class
-        current_directory = os.path.dirname(os.path.abspath(__file__))  # Lấy đường dẫn đến thư mục hiện tại của file .py
-        modal_path = os.path.join(current_directory, 'modals', 'yolov8s', 'last.pt')
+        # Lấy đường dẫn đến thư mục hiện tại của file .py
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        modal_path = os.path.join(
+            current_directory, 'modals', 'yolov8s', 'last.pt')
         self.modal = YOLO(modal_path)
         print('Model loaded!!')
 
@@ -42,15 +45,11 @@ class YoloDetect():
             for box in result.boxes:
                 conf = round(box.conf[0].item(), 2)
                 if conf > 0.4:
+                    x1, y1, x2, y2 = [round(x) for x in box.xyxy[0].tolist()]
                     class_id = result.names[box.cls[0].item()]
                     cords = box.xyxy[0].tolist()
                     cords = [round(x) for x in cords]
-                    arr.append(
-                        {'class': class_id, 'coordinates': cords, 'probability': conf})
-                    print("Object type:", class_id)
-                    print("Coordinates:", cords)
-                    print("Probability:", conf)
-                    print("---")
+                    arr.append([x1, y1, x2, y2, class_id, conf])
         return arr
 
     def check_violations(self, image, camera_coordinates):
@@ -58,7 +57,6 @@ class YoloDetect():
         list_vehicle_violation = []
         camera_rectangle = convert_to_coordinates(camera_coordinates)
         for obj in results:
-            if not is_center_inside_rectangle(obj['coordinates'], camera_rectangle):
+            if not is_center_inside_rectangle(obj, camera_rectangle):
                 list_vehicle_violation.append(obj)
         return list_vehicle_violation
-

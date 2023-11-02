@@ -2,3 +2,7 @@ flask
 ultralytics
 flask_cors
 waitress
+easyocr
+matplotlib
+asyncio
+python-dotenv

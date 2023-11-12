@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 import io
-from io import BytesIO
+from flask import request, Response, json
+
 def is_center_inside_rectangle(rectangle1, rectangle2):
     center_x1 = (rectangle1[0] + rectangle1[2]) / 2
     center_y1 = (rectangle1[1] + rectangle1[3]) / 2
@@ -39,6 +40,9 @@ def draw_image_and_boxes(image_file, boxes):
         draw.rectangle([x1, y1, x1 + len(text) * 8, y1 + 25], fill="#00ff00")  # Adjust the width based on the text length
         draw.text((x1, y1 + 18), text, fill="#000000")
 
+    # Convert image to RGB mode before saving
+    img = img.convert("RGB")
+
     # Save the modified image as bytes and return
     img_bytes = io.BytesIO()
     img.save(img_bytes, format='JPEG')
@@ -46,11 +50,16 @@ def draw_image_and_boxes(image_file, boxes):
     return img_bytes
 
 
-def crop_image(image_file, coordinates, c):
-    print("Crop image ----------------------->:" + c)
-    image = Image.open(image_file)
+def crop_image(image, coordinates):
     left, upper, right, lower = coordinates
     cropped_image = image.crop((left, upper, right, lower))
-    
     return cropped_image
 
+def get_image_from_request():
+    if "image_file" not in request.files:
+        return None, Response(
+            json.dumps({"error": "Invalid request data"}),
+            status=400,
+            mimetype='application/json'
+        )
+    return request.files["image_file"], None

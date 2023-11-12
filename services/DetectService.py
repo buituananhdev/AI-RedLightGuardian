@@ -15,7 +15,7 @@ class YoloDetect():
         for result in results:
             for box in result.boxes:
                 conf = round(box.conf[0].item(), 2)
-                if conf > 0.4:
+                if conf > 0.1:
                     x1, y1, x2, y2 = [round(x) for x in box.xyxy[0].tolist()]
                     class_id = result.names[box.cls[0].item()]
                     cords = box.xyxy[0].tolist()

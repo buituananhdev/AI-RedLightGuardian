@@ -1,9 +1,6 @@
-flask 
 ultralytics
+flask
 flask_cors
 waitress
-easyocr
-matplotlib
-asyncio
 python-dotenv
 Pillow

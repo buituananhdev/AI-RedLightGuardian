@@ -1,25 +1,36 @@
+# Ignore system-specific files
 .DS_Store
+
+# Ignore environment-specific files
 .env
 .flaskenv
-*.pyc
-*.pyo
 env/
 venv/
 .venv/
-env*
+
+# Ignore compiled Python files
+*.pyc
+*.pyo
+
+# Ignore distribution/build files
 dist/
 build/
 *.egg
 *.egg-info/
+
+# Ignore testing and coverage files
 .tox/
 .cache/
 .pytest_cache/
-.idea/
-docs/_build/
-.vscode
-
-# Coverage reports
 htmlcov/
 .coverage
 .coverage.*
 *,cover
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+
+# Ignore generated documentation and temporary files
+docs/_build/
+__pycache__/

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, Response, json
+from flask import Flask, request, Response, json, render_template
 import requests
 from PIL import Image
 from io import BytesIO
@@ -21,8 +21,7 @@ model = ProcessService()
 @app.route("/")
 def root():
     """Handles the root endpoint, serves the HTML page."""
-    with open("index.html") as file:
-        return file.read()
+    return render_template('index.html', title='AI PBL4', name='Tuan Anh')
 
 @app.route("/detect", methods=["POST"])
 def detect():

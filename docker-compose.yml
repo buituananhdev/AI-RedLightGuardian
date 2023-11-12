@@ -1,0 +1,10 @@
+version: "3.10"
+
+services:
+  app:
+    image: pbl4-ai:v1
+    ports:
+      - "3012:3012"
+    restart: unless-stopped
+    environment:
+      PORT: 3012

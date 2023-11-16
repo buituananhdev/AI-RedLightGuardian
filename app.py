@@ -48,8 +48,7 @@ def detect():
         return Response(response.content, mimetype='application/json')
     except requests.RequestException as e:
         return Response(
-            json.dumps(
-                {"error": f"Failed to make external API request: {str(e)}"}),
+            json.dumps("error"),
             status=500,
             mimetype='application/json'
         )

@@ -27,23 +27,29 @@ def convert_to_coordinates(points):
 
 def draw_image_and_boxes(image_file, boxes):
     """Draw bounding boxes on the image and return the modified image."""
+    # Open the image and create a copy
     img = Image.open(image_file.stream).copy()
+
+    # Convert the image to RGBA mode for a wider color range
+    img = img.convert("RGBA")
     draw = ImageDraw.Draw(img)
 
     for box in boxes:
-        print(box)
         x1, y1, x2, y2 = box["cords"]
         label = box["class"]
         probability = box["conf"]
-        draw.rectangle([x1, y1, x2, y2], outline="#00FF00", width=3)
-        text = f"{label} ({probability})"
-        draw.rectangle([x1, y1, x1 + len(text) * 8, y1 + 25], fill="#00ff00")  # Adjust the width based on the text length
-        draw.text((x1, y1 + 18), text, fill="#000000")
 
-    # Convert image to RGB mode before saving
-    img = img.convert("RGB")
+        # Draw bounding box with RGBA color
+        draw.rectangle([x1, y1, x2, y2], outline=(0, 255, 0, 255), width=3)
+
+        # Draw filled rectangle for label background
+        draw.rectangle([x1, y1, x1 + len(f"{label} ({probability})") * 8, y1 + 25], fill=(0, 255, 0, 128))
+
+        # Draw text on the image
+        draw.text((x1, y1 + 18), f"{label} ({probability})", fill=(0, 0, 0, 255))
 
     # Save the modified image as bytes and return
+    img = img.convert("RGB")  # Convert back to RGB mode before saving
     img_bytes = io.BytesIO()
     img.save(img_bytes, format='JPEG')
     img_bytes.seek(0)

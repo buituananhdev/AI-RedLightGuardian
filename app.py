@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from services.ProcessService import ProcessService
 from helpers.helper import draw_image_and_boxes, get_image_from_request
 from waitress import serve
-
+from services.CharacterService import CharacterDetect
 
 app = Flask(__name__)
 load_dotenv()
@@ -17,7 +17,7 @@ CORS(app)
 EXTERNAL_API_URL = os.getenv("BUSINESS_SERVICE_URL")
 WAITRESS_PORT = 3012
 model = ProcessService()
-
+test_model = CharacterDetect()
 @app.route("/")
 def root():
     """Handles the root endpoint, serves the HTML page."""
@@ -52,6 +52,21 @@ def detect():
             status=500,
             mimetype='application/json'
         )
+
+
+@app.route("/test", methods=["POST"])
+def test():
+    image_file, error_response = get_image_from_request()
+    if error_response:
+        return error_response
+
+    result = test_model.detect(Image.open(BytesIO(image_file.read())))
+    return Response(
+            json.dumps(result),
+            status=200,
+            mimetype='application/json'
+        )
+
 
 if __name__ == '__main__':
     print(f"Flask server is listening on port {WAITRESS_PORT}")

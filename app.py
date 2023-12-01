@@ -6,7 +6,7 @@ from io import BytesIO
 from flask_cors import CORS
 from dotenv import load_dotenv
 from services.ProcessService import ProcessService
-from helpers.helper import draw_image_and_boxes, get_image_from_request
+from helpers.helper import draw_image_and_boxes, get_image_from_request, get_cords
 from waitress import serve
 from services.CharacterService import CharacterDetect
 
@@ -29,15 +29,7 @@ def detect():
     if error_response:
         return error_response
 
-    camera_coordinates = request.form.get("cords")
-    try:
-        cords = json.loads(camera_coordinates)
-    except json.JSONDecodeError:
-        return Response(
-            json.dumps({"error": "Invalid cords data. Cannot parse JSON."}),
-            status=400,
-            mimetype='application/json'
-        )
+    cords = get_cords(EXTERNAL_API_URL + "cameras/1")
     result = model.process_violation(Image.open(BytesIO(image_file.read())), cords)
     print("Result of detect: ", result["list_license_plate_violation"])
     draw_image = draw_image_and_boxes(image_file, result["boxes"])

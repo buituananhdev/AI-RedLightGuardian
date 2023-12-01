@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 import io
 from flask import request, Response, json
+import requests
 
 def is_center_inside_rectangle(rectangle1, rectangle2):
     center_x1 = (rectangle1[0] + rectangle1[2]) / 2
@@ -69,3 +70,19 @@ def get_image_from_request():
             mimetype='application/json'
         )
     return request.files["image_file"], None
+
+def get_cords(api_url):
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            data = response.json()
+            coordinates_str = data.get("coordinates", "[]")
+            coordinates_list = json.loads(coordinates_str)
+            print(coordinates_list)
+            return coordinates_list
+        else:
+            print(f'Error {response.status_code} from API')
+            return None
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return None

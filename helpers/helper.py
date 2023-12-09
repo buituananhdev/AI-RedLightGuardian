@@ -63,13 +63,13 @@ def crop_image(image, coordinates):
     return cropped_image
 
 def get_image_from_request():
-    if "image_file" not in request.files:
+    if "file" not in request.files:
         return None, Response(
             json.dumps({"error": "Invalid request data"}),
             status=400,
             mimetype='application/json'
         )
-    return request.files["image_file"], None
+    return request.files["file"], None
 
 def get_cords(api_url):
     try:
@@ -78,7 +78,6 @@ def get_cords(api_url):
             data = response.json()
             coordinates_str = data.get("coordinates", "[]")
             coordinates_list = json.loads(coordinates_str)
-            print(coordinates_list)
             return coordinates_list
         else:
             print(f'Error {response.status_code} from API')

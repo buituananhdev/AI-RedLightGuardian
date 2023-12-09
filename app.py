@@ -29,7 +29,7 @@ def detect():
     if error_response:
         return error_response
 
-    cords = get_cords(EXTERNAL_API_URL + "cameras/1")
+    cords = get_cords(EXTERNAL_API_URL + "cameras/2")
     result = model.process_violation(Image.open(BytesIO(image_file.read())), cords)
     print("Result of detect: ", result["list_license_plate_violation"])
     draw_image = draw_image_and_boxes(image_file, result["boxes"])

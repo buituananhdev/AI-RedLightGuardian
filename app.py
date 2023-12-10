@@ -25,22 +25,27 @@ def root():
 
 @app.route("/detect", methods=["POST"])
 def detect():
-    image_file, error_response = get_image_from_request()
-    if error_response:
-        return error_response
-
-    cords = get_cords(EXTERNAL_API_URL + "cameras/2")
-    result = model.process_violation(Image.open(BytesIO(image_file.read())), cords)
-    print("Result of detect: ", result["list_license_plate_violation"])
-    draw_image = draw_image_and_boxes(image_file, result["boxes"])
-    files = {'file': ('image.jpg', draw_image, 'image/jpeg')}
-    data = {'licensePlates': result["list_license_plate_violation"], 'cameraID': '1'}
     try:
-        response = requests.post(EXTERNAL_API_URL + "violations", files=files, data=data)
-        return Response(response.content, mimetype='application/json')
-    except requests.RequestException as e:
+        image_file, error_response = get_image_from_request()
+        if error_response:
+            return error_response
+
+        cords = get_cords(EXTERNAL_API_URL + "cameras/2")
+        result = model.process_violation(Image.open(BytesIO(image_file.read())), cords)
+        print("Result of detect: ", result["list_license_plate_violation"])
+        if(len(result) > 0):
+            draw_image = draw_image_and_boxes(image_file, result["boxes"])
+            files = {'file': ('image.jpg', draw_image, 'image/jpeg')}
+            data = {'licensePlates': result["list_license_plate_violation"], 'cameraID': '1'}
+            
+            response = requests.post(EXTERNAL_API_URL + "violations", files=files, data=data)
+            return Response(response.content, mimetype='application/json')
+        else:
+            return Response("No vehicle found", mimetype='application/json')
+        
+    except Exception as e:
         return Response(
-            json.dumps("error"),
+            json.dumps(str(e)),
             status=500,
             mimetype='application/json'
         )

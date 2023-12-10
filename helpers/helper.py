@@ -85,3 +85,16 @@ def get_cords(api_url):
     except Exception as e:
         print(f'Error: {str(e)}')
         return None
+
+def format_license_plate(extracted_text):
+        full_text = ''.join(extracted_text)
+        if len(full_text) == 8 and full_text[:2].isdigit() and full_text[2].isalpha() and full_text[3:].isdigit():
+            return full_text
+
+        formatted_text = ''
+        if len(extracted_text) == 2:
+            if len(extracted_text[0]) == 3:
+                formatted_text = extracted_text[0] + extracted_text[1]
+            else:
+                formatted_text = extracted_text[1] + extracted_text[0]
+        return formatted_text.upper()
